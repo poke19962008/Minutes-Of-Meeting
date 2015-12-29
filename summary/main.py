@@ -4,13 +4,19 @@ from nltk.tokenize.punkt import PunktSentenceTokenizer
 from nltk.tokenize import word_tokenize
 
 
-
 class Summary:
     def __init__(self, document):
         self.document = document
+
         self.sumLength = 10
+
         self.weights = {}
         self.invWeights = {}
+        self.sumIndex = {}
+        self.summary = {}
+
+        tokenizer = PunktSentenceTokenizer()
+        self.sentences = [sentence.lower() for sentence in tokenizer.tokenize(document)]
 
     def getWeight(self):
         stopWords = open('summary/stopWords.txt').read().split('\n')
@@ -19,11 +25,8 @@ class Summary:
         words = [word for word in words if word not in stopWords]
         fWords = FreqDist(words).items()
 
-        tokenizer = PunktSentenceTokenizer()
-        sentences = [sentence.lower() for sentence in tokenizer.tokenize(self.document)]
-
         tokenizer = RegexpTokenizer('\w+')
-        for sentence in sentences:
+        for sentence in self.sentences:
             self.weights[sentence] = { 'keyWords': [] }
             weight = 0
 
@@ -36,11 +39,21 @@ class Summary:
             self.invWeights[weight] = []
             self.invWeights[weight].append(sentence)
 
-    # def sequentialSort(self):
-        # Sort the summary in sequential order of the original document
+    def sequentialSort(self, summary):
+        for key in summary.iterkeys():
+            summary[key]['index'] = self.sentences.index(key)
+            self.sumIndex[self.sentences.index(key)] = key
+        return summary
+
+    def getSummaryText(self):
+        self.getSummary()
+
+        for index in sorted(self.sumIndex.iterkeys()):
+            print "+ " + self.sumIndex[index]
 
     def getSummary(self):
         self.getWeight()
+
         summary = {}
         prevKey = -1
         for key in sorted(self.invWeights.iterkeys(), reverse=True):
@@ -53,4 +66,6 @@ class Summary:
                 summary[sentence] = self.weights[sentence]
 
             prevKey = key
-        return summary      # This is non-sequential summary
+
+        self.summary = self.sequentialSort(summary)
+        return self.summary      # This is non-sequential summary

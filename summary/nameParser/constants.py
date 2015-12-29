@@ -50,8 +50,6 @@ TITLES = set([
     'his','her','kingdom','royal',
 ])
 
-PUNC_TITLES = ('hon.',)
-
 SUFFIXES = set([
     'esq','esquire','jr','sr','2','i','ii','iii','iv','v','clu','chfc',
     'cfp','md','phd'
