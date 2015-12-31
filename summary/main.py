@@ -3,6 +3,7 @@ from nltk.tokenize import RegexpTokenizer
 from nltk.tokenize.punkt import PunktSentenceTokenizer
 from nltk.tokenize import word_tokenize
 
+from nameparser import HumanName
 
 class Summary:
     def __init__(self, document):
@@ -17,6 +18,8 @@ class Summary:
 
         tokenizer = PunktSentenceTokenizer()
         self.sentences = [sentence.lower() for sentence in tokenizer.tokenize(document)]
+
+        HumanName(self.document)
 
     def getWeight(self):
         stopWords = open('summary/stopWords.txt').read().split('\n')
@@ -68,4 +71,4 @@ class Summary:
             prevKey = key
 
         self.summary = self.sequentialSort(summary)
-        return self.summary      # This is non-sequential summary
+        return self.summary
